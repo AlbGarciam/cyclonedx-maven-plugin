@@ -27,6 +27,7 @@
         <module>test_nested_dependency1</module>
         <module>test_nested_dependency2</module>
         <module>test_nested_dependency3</module>
+        <module>test_nested_dependency_zip</module>
 
         <module>shared_dependency1</module>
         <module>shared_dependency2</module>

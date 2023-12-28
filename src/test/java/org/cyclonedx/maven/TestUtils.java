@@ -60,6 +60,10 @@ class TestUtils {
         return getReferences(null, parent, "component", "bom-ref");
     }
 
+    static Set<String> getLicenseReferences(final Node parent) {
+        return getReferences(null, parent, "licenses", "bom-ref");
+    }
+
     static Set<String> getDependencyReferences(final Node parent) {
         return getReferences(null, parent, "dependency", "ref");
     }

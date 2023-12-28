@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,4 +14,14 @@
     <artifactId>test_nested_dependency3</artifactId>
 
     <name>Test Nested Dependency 3</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ibm.websphere.appserver.features</groupId>
+            <artifactId>wlp-nd-license</artifactId>
+            <version>23.0.0.12</version>
+            <type>zip</type>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

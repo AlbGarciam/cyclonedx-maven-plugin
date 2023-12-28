@@ -4,6 +4,7 @@ import static org.cyclonedx.maven.TestUtils.getComponentNode;
 import static org.cyclonedx.maven.TestUtils.getComponentReferences;
 import static org.cyclonedx.maven.TestUtils.getDependencyNode;
 import static org.cyclonedx.maven.TestUtils.getDependencyReferences;
+import static org.cyclonedx.maven.TestUtils.getLicenseReferences;
 import static org.cyclonedx.maven.TestUtils.readXML;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +37,7 @@ public class BomDependenciesTest extends BaseMavenVerifier {
     private static final String SHARED_DEPENDENCY2 = "pkg:maven/com.example/shared_dependency2@1.0.0?type=jar";
     private static final String TEST_NESTED_DEPENDENCY2 = "pkg:maven/com.example/test_nested_dependency2@1.0.0?type=jar";
     private static final String TEST_NESTED_DEPENDENCY3 = "pkg:maven/com.example/test_nested_dependency3@1.0.0?type=jar";
+    private static final String TEST_NESTED_DEPENDENCYZIP = "pkg:maven/com.ibm.websphere.appserver.features/wlp-nd-license@23.0.0.12?type=zip";
     private static final String SHARED_RUNTIME_DEPENDENCY1 = "pkg:maven/com.example/shared_runtime_dependency1@1.0.0?type=jar";
     private static final String SHARED_RUNTIME_DEPENDENCY2 = "pkg:maven/com.example/shared_runtime_dependency2@1.0.0?type=jar";
     private static final String TEST_COMPILE_DEPENDENCY = "pkg:maven/com.example/test_compile_dependency@1.0.0?type=jar";
@@ -124,7 +126,7 @@ public class BomDependenciesTest extends BaseMavenVerifier {
         final Node testNestedDependency3Node = getDependencyNode(dependencies, TEST_NESTED_DEPENDENCY3);
         assertNotNull("Missing test_nested_dependency3 dependency", testNestedDependency3Node);
         Set<String> testNestedDependency3Dependencies = getDependencyReferences(testNestedDependency3Node);
-        assertEquals("Invalid dependency count for test_nested_dependency3", 0, testNestedDependency3Dependencies.size());
+        assertEquals("Invalid dependency count for test_nested_dependency3", 1, testNestedDependency3Dependencies.size());
     }
 
     /**
@@ -196,6 +198,28 @@ public class BomDependenciesTest extends BaseMavenVerifier {
         for (String componentRef: componentReferences) {
             assertNotNull("Missing top level dependency for component reference " + componentRef, getDependencyNode(dependencies, componentRef));
         }
+    }
+
+    /**
+     * This test ensures the zip dependency contains the license file
+     * @throws Exception
+     */
+    @Test
+    public void testZipDependency() throws Exception {
+        final File projDir = cleanAndBuild("bom-dependencies", new String[]{"test-zip"});
+
+        final Document bom = readXML(new File(projDir, "trustification/target/bom.xml"));
+
+        // BOM should contain a component element for pkg:maven/com.ibm.websphere.appserver.features/wlp-nd-license@23.0.0
+        final NodeList componentsList = bom.getElementsByTagName("components");
+        assertEquals("Expected a single components element", 1, componentsList.getLength());
+        final Node components = componentsList.item(0);
+        final Node testNestedDependencyZIPNode = getComponentNode(components, TEST_NESTED_DEPENDENCYZIP);
+        assertNotNull("Missing test_nested_dependency_zip component", testNestedDependencyZIPNode);
+
+        // BOM should contain a license element for pkg:maven/com.ibm.websphere.appserver.features/wlp-nd-license@23.0.0
+        final Set<String> licensesList = getLicenseReferences(testNestedDependencyZIPNode);
+        assertEquals("Expected a single licenses element", 1, licensesList.size());
     }
 
     /**
